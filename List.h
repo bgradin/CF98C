@@ -36,14 +36,14 @@ void ListDelete(struct List* list, int position)
 	if (list->head.next == NULL)
 		return;
 
-	struct Node* prev = &list->head, * tmpNode = list->head.next;
+	struct Node* prev = &list->head, *tmpNode = list->head.next;
 
 	int i = 0;
-	while (tmpNode->next != NULL && i++ < position)
+	while (i++ < position && tmpNode->next != NULL)
 		tmpNode = tmpNode->next, prev = prev->next;
 
 	if (i == position + 1)
-		NodeFree(tmpNode), prev->next = NULL;
+		NodeFree(tmpNode), prev->next = tmpNode->next, free(tmpNode);
 }
 
 void ListFree(struct List* list)
