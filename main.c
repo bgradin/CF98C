@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdio.h>
-#include "BF98Lex.h"
+#include "CF98Lex.h"
 
 void output(const char* text)
 {
@@ -30,7 +30,11 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	BF98Parse(fp);
+	output("Compiling...\n");
+
+	struct BF98Lex *lex;
+	BF98Init(lex, fp);
+	BF98Parse(lex);
 
 	if (fclose(fp) == EOF)
 	{

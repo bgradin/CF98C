@@ -1,9 +1,9 @@
-BFC
+CF98C
 ===
 
-Befunge compiler - A compiler for Befunge-98, written in C
+Concurrent Funge-98 Compiler - A compiler for concurrent Funge-98, written in C
 
-Usage: bfc [source]
+Usage: cf98c [source]
 
   [source]: A file containing a program written in Befunge-98
 

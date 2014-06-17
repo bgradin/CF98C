@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BF98Lex.h">
+    <ClInclude Include="CF98Lex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

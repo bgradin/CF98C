@@ -13,7 +13,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7A862093-7AB0-4BB3-90ED-BD040883E93F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>BFC</RootNamespace>
+    <RootNamespace>CF98C</RootNamespace>
+    <ProjectName>CF98C</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,7 +82,7 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BF98Lex.h" />
+    <ClInclude Include="CF98Lex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
