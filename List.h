@@ -1,6 +1,5 @@
 #pragma once
 #include <stdlib.h>
-#include <stdio.h>
 
 struct ListNode
 {
@@ -67,10 +66,4 @@ void ListFree(struct List* list)
 {
 	while (list->head.next != NULL)
 		ListDelete(list, 0);
-}
-
-void PrintList(struct List* list)
-{
-	for (struct ListNode* cur = list->head.next; cur != NULL; cur = cur->next)
-		printf("%d\n", *((int*)cur->data));
 }
