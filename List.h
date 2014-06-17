@@ -31,7 +31,7 @@ void ListInit(struct List* list)
 
 void ListAdd(struct List* list, void* data)
 {
-	struct ListNode* newNode = malloc(sizeof(struct ListNode));
+	struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
 	ListNodeInit(newNode, data);
 
 	if (list->head.next == NULL)
