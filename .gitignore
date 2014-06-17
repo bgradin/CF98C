@@ -1,0 +1,8 @@
+#Ignore everything in the bin, obj, and .git folders
+bin/
+obj/
+.git/
+
+#Ignore anything ending in .user or .suo
+*.user
+*.suo
