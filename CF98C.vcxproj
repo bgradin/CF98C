@@ -83,6 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CF98Lex.h" />
+    <ClInclude Include="List.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="Stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
