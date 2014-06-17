@@ -7,7 +7,7 @@ void output(const char* text)
 	printf("%s", text);
 }
 
-void main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	if (argc != 2)
 	{
