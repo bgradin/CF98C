@@ -22,9 +22,9 @@ void main(int argc, char** argv)
 		return 0;
 	}
 
-	FILE *fp = fopen(argv[1], "r");
+	FILE *fp;
 
-	if (fp == NULL)
+	if (fopen_s(&fp, argv[1], "r") != 0)
 	{
 		output("Error opening source file.\n");
 		return 1;
