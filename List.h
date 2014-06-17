@@ -1,26 +1,10 @@
 #pragma once
 #include <stdlib.h>
-
-struct ListNode
-{
-	void* data;
-	struct ListNode* next;
-};
-
-void ListNodeInit(struct ListNode* node, void* data)
-{
-	node->data = data;
-	node->next = NULL;
-}
-
-void ListNodeFree(struct ListNode* node)
-{
-	free(node->data);
-}
+#include "Set.h"
 
 struct List
 {
-	struct ListNode head;
+	struct Node head;
 };
 
 void ListInit(struct List* list)
@@ -30,7 +14,7 @@ void ListInit(struct List* list)
 
 void ListAdd(struct List* list, void* data)
 {
-	struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 	ListNodeInit(newNode, data);
 
 	if (list->head.next == NULL)
@@ -39,7 +23,7 @@ void ListAdd(struct List* list, void* data)
 		return;
 	}
 
-	struct ListNode *tmpNode = list->head.next;
+	struct Node *tmpNode = list->head.next;
 
 	while (tmpNode->next != NULL)
 		tmpNode = tmpNode->next;
@@ -52,7 +36,7 @@ void ListDelete(struct List* list, int position)
 	if (list->head.next == NULL)
 		return;
 
-	struct ListNode* prev = &list->head, * tmpNode = list->head.next;
+	struct Node* prev = &list->head, * tmpNode = list->head.next;
 
 	int i = 0;
 	while (tmpNode->next != NULL && i++ < position)
