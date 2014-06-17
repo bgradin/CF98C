@@ -1,7 +1,7 @@
 CF98C
 ===
 
-Concurrent Funge-98 Compiler - A compiler for concurrent Funge-98, written in C
+Concurrent Funge-98 Compiler - A compiler (written in C) for concurrent Funge-98
 
 Usage: cf98c [source]
 
