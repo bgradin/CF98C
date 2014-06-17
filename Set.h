@@ -7,13 +7,13 @@ struct Node
 	struct Node* next;
 };
 
-void ListNodeInit(struct Node* node, void* data)
+void NodeInit(struct Node* node, void* data)
 {
 	node->data = data;
 	node->next = NULL;
 }
 
-void ListNodeFree(struct Node* node)
+void NodeFree(struct Node* node)
 {
 	free(node->data);
 }

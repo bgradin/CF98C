@@ -9,13 +9,13 @@ struct List
 
 void ListInit(struct List* list)
 {
-	ListNodeInit(&list->head, NULL);
+	NodeInit(&list->head, NULL);
 }
 
 void ListAdd(struct List* list, void* data)
 {
 	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-	ListNodeInit(newNode, data);
+	NodeInit(newNode, data);
 
 	if (list->head.next == NULL)
 	{
@@ -43,7 +43,7 @@ void ListDelete(struct List* list, int position)
 		tmpNode = tmpNode->next, prev = prev->next;
 
 	if (i == position + 1)
-		ListNodeFree(tmpNode), prev->next = NULL;
+		NodeFree(tmpNode), prev->next = NULL;
 }
 
 void ListFree(struct List* list)
