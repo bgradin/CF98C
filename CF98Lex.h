@@ -12,6 +12,7 @@
 #define DIRECTION_LEFT 3
 
 #define EOFSY '@'
+#define QUITSY 'q'
 
 struct CF98Lex
 {
@@ -313,6 +314,16 @@ void ExecuteToken(struct CF98Lex* lex)
 		case '#':
 			CF98Move(lex);
 			break;
+		case 'k':
+		{
+			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
+			CF98Move(lex);
+			lex->currentToken = GetToken(lex, lex->x, lex->y);
+			for (int i = 0; i < *num1; i++)
+				ExecuteToken(lex);
+			free(num1);
+		}
+			break;
 		case 'p':
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
@@ -378,7 +389,7 @@ void CF98Parse(struct CF98Lex* lex)
 	//   we can calculate where in the stream (x, y) is.
 	FindNewLines(lex);
 
-	while (lex->currentToken != EOFSY)
+	while (lex->currentToken != EOFSY && lex->currentToken != QUITSY)
 	{
 		lex->currentToken = GetToken(lex, lex->x, lex->y);
 		ExecuteToken(lex);
