@@ -125,6 +125,9 @@ void ExecuteToken(struct CF98Lex* lex)
 		case 'v':
 			lex->currentDirection = DIRECTION_DOWN;
 			break;
+		case '?':
+			lex->currentDirection = rand() % 4;
+			break;
 		case '"':
 			lex->flags ^= CF_AGGREGATING_STRING;
 			break;
@@ -171,6 +174,52 @@ void ExecuteToken(struct CF98Lex* lex)
 			free(num1);
 			free(num2);
 			StackPush(lex->memory, result);
+		}
+			break;
+		case '%':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* num2 = (int*)StackPop(lex->memory);
+			int* result = (int*)malloc(sizeof(int));
+			if (*num2 != 0)
+				*result = *num2 % *num1;
+			free(num1);
+			free(num2);
+			StackPush(lex->memory, result);
+		}
+			break;
+		case '`':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* num2 = (int*)StackPop(lex->memory);
+			int* result = (int*)malloc(sizeof(int));
+			*result = *num2 > *num1 ? 1 : 0;
+			free(num1);
+			free(num2);
+			StackPush(lex->memory, result);
+		}
+			break;
+		case '!':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* result = (int*)malloc(sizeof(int));
+			*result = *num1 == 0 ? 1 : 0;
+			free(num1);
+			StackPush(lex->memory, result);
+		}
+			break;
+		case '_':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			lex->currentDirection = *num1 == 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
+			free(num1);
+		}
+			break;
+		case '|':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			lex->currentDirection = *num1 == 0 ? DIRECTION_DOWN : DIRECTION_UP;
+			free(num1);
 		}
 			break;
 		case ':':
