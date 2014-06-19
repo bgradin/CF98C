@@ -79,26 +79,78 @@ void FindNewLines(struct CF98Lex* lex)
 	}
 }
 
-char GetToken(struct CF98Lex* lex)
+struct ExistenceReturn
+{
+	int existed;
+	char* location;
+};
+
+struct ExistenceReturn CF98InstructionVerifyExistence(struct CF98Lex* lex, int xPos, int yPos)
 {
 	// Make sure the column exists
-	struct HashArray* instructions = (struct HashArray*)lex->instructions->data[HashArrayIndex(lex->instructions, lex->x)].data;
+	int instX = HashArrayIndex(lex->instructions, xPos);
+	struct HashArray* instructions = lex->instructions->data[instX].data;
 	if (instructions == NULL)
 	{
 		instructions = malloc(sizeof(struct HashArray));
 		HashArrayInit(instructions);
+		HashArrayStore(lex->instructions, instX, instructions);
 	}
 
 	// Make sure the cell exists
-	char* instruction = (char*)instructions->data[HashArrayIndex(lex->instructions, lex->y)].data;
+	int instY = HashArrayIndex(lex->instructions, yPos);
+	char* instruction = instructions->data[instY].data;
+	struct ExistenceReturn returnValue;
 	if (instruction == NULL)
-		instruction = (char*)malloc(sizeof(char));
+	{
+		returnValue.location = instruction = (char*)malloc(sizeof(char));
+		*instruction = ' ';
+		HashArrayStore(instructions, instY, instruction);
+		returnValue.existed = 1;
+	}
 	else
-		return *instruction; // Return it if it already does
+	{
+		returnValue.location = instruction;
+		returnValue.existed = 0;
+	}
 
-	// If we didn't find the instruction in the instructions structure, we have to look in the file
-	char tmp = CharAt(lex, lex->x, lex->y);
-	return *instruction = tmp != EOF ? tmp : ' ';
+	return returnValue;
+}
+
+void CF98InstructionStore(struct CF98Lex* lex, char value, int xPos, int yPos)
+{
+	struct ExistenceReturn existence = CF98InstructionVerifyExistence(lex, xPos, yPos);
+	*(existence.location) = value;
+}
+
+char GetToken(struct CF98Lex* lex, int xPos, int yPos)
+{
+	struct ExistenceReturn existence = CF98InstructionVerifyExistence(lex, xPos, yPos);
+	
+	if (existence.existed != 0)
+		*(existence.location) = CharAt(lex, xPos, yPos);
+
+	return *(existence.location);
+}
+
+void CF98Move(struct CF98Lex* lex)
+{
+	switch (lex->currentDirection)
+	{
+	case DIRECTION_UP:
+		lex->y--;
+		break;
+	case DIRECTION_DOWN:
+		lex->y++;
+		break;
+	case DIRECTION_LEFT:
+		lex->x--;
+		break;
+	case DIRECTION_NONE:
+	case DIRECTION_RIGHT:
+		lex->x++;
+		break;
+	}
 }
 
 void ExecuteToken(struct CF98Lex* lex)
@@ -244,6 +296,61 @@ void ExecuteToken(struct CF98Lex* lex)
 			free(num);
 		}
 			break;
+		case '\\':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* num2 = (int*)StackPop(lex->memory);
+			StackPush(lex->memory, num1);
+			StackPush(lex->memory, num2);
+		}
+			break;
+		case '$':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			free(num1);
+		}
+			break;
+		case '#':
+			CF98Move(lex);
+			break;
+		case 'p':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* num2 = (int*)StackPop(lex->memory);
+			int* num3 = (int*)StackPop(lex->memory);
+			CF98InstructionStore(lex, *num3, *num2, *num1);
+			free(num1);
+			free(num2);
+			free(num3);
+		}
+			break;
+		case 'g':
+		{
+			int* num1 = (int*)StackPop(lex->memory);
+			int* num2 = (int*)StackPop(lex->memory);
+			int* value = malloc(sizeof(int));
+			*value = GetToken(lex, *num1, *num2);
+			StackPush(lex->memory, value);
+			free(num1);
+			free(num2);
+		}
+			break;
+		case '&':
+		{
+			int* input = malloc(sizeof(int));
+			scanf_s("%i", input);
+			StackPush(lex->memory, input);
+		}
+			break;
+		case '~':
+		{
+			int* input = malloc(sizeof(int));
+			char tmp = 0;
+			scanf_s("%c", &tmp);
+			*input = tmp;
+			StackPush(lex->memory, input);
+		}
+			break;
 		default:
 			if (lex->currentToken >= '0' && lex->currentToken <= '9')
 			{
@@ -255,23 +362,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		}
 	}
 
-	// Keep us moving
-	switch (lex->currentDirection)
-	{
-	case DIRECTION_UP:
-		lex->y--;
-		break;
-	case DIRECTION_DOWN:
-		lex->y++;
-		break;
-	case DIRECTION_LEFT:
-		lex->x--;
-		break;
-	case DIRECTION_NONE:
-	case DIRECTION_RIGHT:
-		lex->x++;
-		break;
-	}
+	CF98Move(lex);
 }
 
 void CF98Parse(struct CF98Lex* lex)
@@ -283,7 +374,7 @@ void CF98Parse(struct CF98Lex* lex)
 
 	while (lex->currentToken != EOFSY)
 	{
-		lex->currentToken = GetToken(lex);
+		lex->currentToken = GetToken(lex, lex->x, lex->y);
 		ExecuteToken(lex);
 	}
 }
