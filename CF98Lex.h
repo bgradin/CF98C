@@ -358,6 +358,12 @@ void ExecuteToken(struct CF98Lex* lex)
 				*newMemory = lex->currentToken - '0';
 				StackPush(lex->memory, newMemory);
 			}
+			if (lex->currentToken >= 'a' && lex->currentToken <= 'f')
+			{
+				int* newMemory = (int*)malloc(sizeof(int));
+				*newMemory = lex->currentToken - 82;
+				StackPush(lex->memory, newMemory);
+			}
 			break;
 		}
 	}
