@@ -1,5 +1,6 @@
 #pragma once
 #include <stdlib.h>
+#include <string.h>
 #include "Set.h"
 
 struct Stack
@@ -21,10 +22,14 @@ void StackPush(struct Stack* stack, void* data)
 	stack->head.next = newNode;
 }
 
-void* StackPop(struct Stack* stack)
+void* StackPop(struct Stack* stack, size_t size)
 {
 	if (stack->head.next == NULL)
-		return;
+	{
+		void* newMemory = malloc(size);
+		memset(newMemory, 0, size);
+		return newMemory;
+	}
 
 	void* returnValue = stack->head.next->data;
 	struct Node* nextNode = stack->head.next->next;
@@ -34,8 +39,8 @@ void* StackPop(struct Stack* stack)
 	return returnValue;
 }
 
-void StackFree(struct Stack* stack)
+void StackFree(struct Stack* stack, size_t size)
 {
 	while (stack->head.next != NULL)
-		StackPop(stack);
+		StackPop(stack, size);
 }
