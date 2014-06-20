@@ -406,8 +406,6 @@ void ExecuteToken(struct CF98Lex* lex)
 			break;
 		}
 	}
-
-	CF98Move(lex);
 }
 
 void CF98Parse(struct CF98Lex* lex)
@@ -421,6 +419,7 @@ void CF98Parse(struct CF98Lex* lex)
 	{
 		lex->currentToken = CF98InstructionGet(lex, lex->x, lex->y);
 		ExecuteToken(lex);
+		CF98Move(lex);
 	}
 }
 
