@@ -1,4 +1,7 @@
 #pragma once
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 #include "HashArray.h"
 #include "List.h"
 #include "Stack.h"
@@ -130,7 +133,7 @@ void CF98InstructionStore(struct CF98Lex* lex, int value, int xPos, int yPos)
 int CF98InstructionGet(struct CF98Lex* lex, int xPos, int yPos)
 {
 	struct ExistenceReturn existence = CF98InstructionVerifyExistence(lex, xPos, yPos);
-	
+
 	if (existence.existed != 0)
 		*(existence.location) = GetToken(lex, xPos, yPos);
 
