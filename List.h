@@ -19,7 +19,7 @@ void ListAdd(struct List* list, void* data)
 	while (*newNodePointer)
 		newNodePointer = &(*newNodePointer)->next;
 
-	(*newNodePointer) = malloc(sizeof *newNodePointer);
+	(*newNodePointer) = malloc(sizeof **newNodePointer);
 	(*newNodePointer)->data = data;
 	(*newNodePointer)->next = NULL;
 }
