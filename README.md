@@ -8,7 +8,7 @@ Usage: cf98c [source]
   [source]: A file containing a program written in Concurrent Funge-98
 
 Current instruction set
-=======================
+-----------------------
 - 0-9	Push this number on the stack
 - a-f	Push the integer value 10-15, respectively, on the stack
 - +	Addition: Pop a and b, then push a+b
@@ -40,7 +40,7 @@ Current instruction set
 - @	End program
 
 References
-==========
+----------
 Befunge:
 http://en.wikipedia.org/wiki/Befunge
 
