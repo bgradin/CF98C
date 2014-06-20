@@ -4,62 +4,53 @@
 
 struct List
 {
-	struct Node head;
+	struct Node* head;
 };
 
 void ListInit(struct List* list)
 {
-	NodeInit(&list->head, NULL);
+	list->head = NULL;
 }
 
 void ListAdd(struct List* list, void* data)
 {
-	struct Node* newNode = malloc(sizeof *newNode);
-	memset(newNode, 0, sizeof(struct Node));
-	NodeInit(newNode, data);
+	struct Node **newNodePointer = &list->head;
 
-	if (list->head.next == NULL)
-	{
-		list->head.next = newNode;
-		return;
-	}
+	while (*newNodePointer)
+		newNodePointer = &(*newNodePointer)->next;
 
-	struct Node *tmpNode = list->head.next;
-
-	while (tmpNode->next != NULL)
-		tmpNode = tmpNode->next;
-
-	tmpNode->next = newNode;
+	(*newNodePointer) = malloc(sizeof *newNodePointer);
+	(*newNodePointer)->data = data;
+	(*newNodePointer)->next = NULL;
 }
 
 struct Node* PtrTo(struct List* list, int position)
 {
-	if (list->head.next == NULL)
-		return NULL;
+	struct Node **returnNodePointer = &list->head;
 
-	struct Node* tmpNode = list->head.next;
+	while (*returnNodePointer && position--)
+		returnNodePointer = &(*returnNodePointer)->next;
 
-	for (int i = 0; i < position && tmpNode != NULL; i++)
-		tmpNode = tmpNode->next;
-
-	return tmpNode;
+	return *returnNodePointer;
 }
 
 void ListDelete(struct List* list, int position)
 {
-	struct Node* prev = position == 0 ? &(list->head) : PtrTo(list, position - 1);
-	struct Node* node = PtrTo(list, position);
+	struct Node **deleteNodePointer = &list->head;
 
-	if (node != NULL)
+	while (*deleteNodePointer && position--)
+		deleteNodePointer = &(*deleteNodePointer)->next;
+
+	if (*deleteNodePointer)
 	{
-		prev->next = node->next;
-		free(node);
-		node = NULL;
+		struct Node *tmp = *deleteNodePointer;
+		*deleteNodePointer = tmp->next;
+		free(tmp);
 	}
 }
 
 void ListFree(struct List* list)
 {
-	while (list->head.next != NULL)
+	while (list->head)
 		ListDelete(list, 0);
 }
