@@ -38,8 +38,6 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	output("Compiling...\n");
-
 	struct CF98Lex* lex = malloc(sizeof *lex);
 	CF98Init(lex, fp);
 	CF98Parse(lex);
