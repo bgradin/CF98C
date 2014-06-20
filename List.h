@@ -54,6 +54,7 @@ void ListDelete(struct List* list, int position)
 	{
 		prev->next = node->next;
 		free(node);
+		node = NULL;
 	}
 }
 

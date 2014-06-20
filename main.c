@@ -45,6 +45,7 @@ int main(int argc, char** argv)
 	CF98Parse(lex);
 	CF98Close(lex);
 	free(lex);
+	lex = NULL;
 
 	if (fclose(fp) == EOF)
 	{

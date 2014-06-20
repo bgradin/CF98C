@@ -197,7 +197,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof(int));
 			*result = *num2 + *num1;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -208,7 +210,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof(int));
 			*result = *num2 - *num1;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -219,7 +223,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof(int));
 			*result = *num2 * *num1;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -231,7 +237,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			if (*num2 != 0)
 				*result = *num2 / *num1;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -243,7 +251,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			if (*num2 != 0)
 				*result = *num2 % *num1;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -254,7 +264,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof(int));
 			*result = *num2 > *num1 ? 1 : 0;
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -264,6 +276,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof(int));
 			*result = *num1 == 0 ? 1 : 0;
 			free(num1);
+			num1 = NULL;
 			StackPush(lex->memory, result);
 		}
 			break;
@@ -272,6 +285,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			lex->currentDirection = *num1 == 0 ? DIRECTION_RIGHT : DIRECTION_LEFT;
 			free(num1);
+			num1 = NULL;
 		}
 			break;
 		case '|':
@@ -279,6 +293,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			lex->currentDirection = *num1 == 0 ? DIRECTION_DOWN : DIRECTION_UP;
 			free(num1);
+			num1 = NULL;
 		}
 			break;
 		case ':':
@@ -294,6 +309,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num = (int*)StackPop(lex->memory, sizeof(int));
 			printf("%i", *num);
 			free(num);
+			num = NULL;
 		}
 			break;
 		case ',':
@@ -301,6 +317,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num = (int*)StackPop(lex->memory, sizeof(int));
 			printf("%c", *num);
 			free(num);
+			num = NULL;
 		}
 			break;
 		case '\\':
@@ -315,6 +332,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			free(num1);
+			num1 = NULL;
 		}
 			break;
 		case '#':
@@ -328,6 +346,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			for (int i = 0; i < *num1; i++)
 				ExecuteToken(lex);
 			free(num1);
+			num1 = NULL;
 		}
 			break;
 		case 'p':
@@ -337,8 +356,11 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num3 = (int*)StackPop(lex->memory, sizeof(int));
 			CF98InstructionStore(lex, *num3, *num2, *num1);
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 			free(num3);
+			num3 = NULL;
 		}
 			break;
 		case 'g':
@@ -349,7 +371,9 @@ void ExecuteToken(struct CF98Lex* lex)
 			*value = CF98InstructionGet(lex, *num2, *num1);
 			StackPush(lex->memory, value);
 			free(num1);
+			num1 = NULL;
 			free(num2);
+			num2 = NULL;
 		}
 			break;
 		case '&':
@@ -415,6 +439,9 @@ void CF98Close(struct CF98Lex* lex)
 	HashArrayFree(lex->instructions);
 
 	free(lex->newlines);
+	lex->newlines = NULL;
 	free(lex->memory);
+	lex->memory = NULL;
 	free(lex->instructions);
+	lex->instructions = NULL;
 }

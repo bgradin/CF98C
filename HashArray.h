@@ -77,9 +77,11 @@ void HashArrayResize(struct HashArray* arr)
 	}
 
 	free(oldMemory);
+	oldMemory = NULL;
 }
 
 void HashArrayFree(struct HashArray* arr)
 {
 	free(arr->data);
+	arr->data = NULL;
 }
