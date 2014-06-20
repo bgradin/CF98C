@@ -34,9 +34,9 @@ void CF98Init(struct CF98Lex* instance, FILE *fp)
 	instance->currentToken = 0;
 	instance->x = instance->y = 0;
 	instance->currentDirection = DIRECTION_NONE;
-	instance->instructions = (struct HashArray*)malloc(sizeof(struct HashArray));
-	instance->memory = (struct Stack*)malloc(sizeof(struct Stack));
-	instance->newlines = (struct List*)malloc(sizeof(struct List));
+	instance->instructions = malloc(sizeof(struct HashArray));
+	instance->memory = malloc(sizeof(struct Stack));
+	instance->newlines = malloc(sizeof(struct List));
 	HashArrayInit(instance->instructions);
 	StackInit(instance->memory);
 	ListInit(instance->newlines);
@@ -49,16 +49,18 @@ char GetToken(struct CF98Lex* lex, int xPos, int yPos)
 
 	int yOff = 0;
 	if (yPos > 0)
-	{
-		struct Node* newline = PtrTo(lex->newlines, yPos);
-		yOff = *((int*)newline->data) + 2;
-	}
+		yOff = *((int*)PtrTo(lex->newlines, yPos)->data) + 2;
+
+	struct Node* nextNode = PtrTo(lex->newlines, yPos + 1);
+
+	if (nextNode != NULL && yOff + xPos > *((int*)nextNode->data) - 1)
+		return ' ';
 
 	clearerr(lex->fp);
 	if (fseek(lex->fp, yOff + xPos, SEEK_SET) == 0)
 		return fgetc(lex->fp);
 
-	return EOF;
+	return ' ';
 }
 
 void FindNewLines(struct CF98Lex* lex)
@@ -66,7 +68,7 @@ void FindNewLines(struct CF98Lex* lex)
 	clearerr(lex->fp);
 	fseek(lex->fp, 0, SEEK_SET);
 
-	int* zero = (int*)malloc(sizeof(int));
+	int* zero = malloc(sizeof(int));
 	*zero = 0;
 	ListAdd(lex->newlines, zero);
 
@@ -74,7 +76,7 @@ void FindNewLines(struct CF98Lex* lex)
 	{
 		if (fgetc(lex->fp) == '\n')
 		{
-			int *newInt = (int*)malloc(sizeof(int));
+			int *newInt = malloc(sizeof(int));
 			*newInt = ftell(lex->fp) - 2;
 			ListAdd(lex->newlines, newInt);
 		}
@@ -96,7 +98,7 @@ struct ExistenceReturn CF98InstructionVerifyExistence(struct CF98Lex* lex, int x
 	{
 		instructions = malloc(sizeof(struct HashArray));
 		HashArrayInit(instructions);
-		HashArrayStore(lex->instructions, instX, instructions);
+		HashArrayStore(lex->instructions, xPos, instructions);
 	}
 
 	// Make sure the cell exists
@@ -105,9 +107,9 @@ struct ExistenceReturn CF98InstructionVerifyExistence(struct CF98Lex* lex, int x
 	struct ExistenceReturn returnValue;
 	if (instruction == NULL)
 	{
-		returnValue.location = instruction = (int*)malloc(sizeof(int));
+		returnValue.location = instruction = malloc(sizeof(int));
 		*instruction = ' ';
-		HashArrayStore(instructions, instY, instruction);
+		HashArrayStore(instructions, yPos, instruction);
 		returnValue.existed = 1;
 	}
 	else
@@ -159,7 +161,7 @@ void ExecuteToken(struct CF98Lex* lex)
 {
 	if (lex->currentToken != '"' && lex->flags & CF_AGGREGATING_STRING == CF_AGGREGATING_STRING)
 	{
-		int* newMemory = (int*)malloc(sizeof(int));
+		int* newMemory = malloc(sizeof(int));
 		*newMemory = lex->currentToken;
 		StackPush(lex->memory, newMemory);
 	}
@@ -189,7 +191,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			*result = *num2 + *num1;
 			free(num1);
 			free(num2);
@@ -200,7 +202,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			*result = *num2 - *num1;
 			free(num1);
 			free(num2);
@@ -211,7 +213,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			*result = *num2 * *num1;
 			free(num1);
 			free(num2);
@@ -222,7 +224,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			if (*num2 != 0)
 				*result = *num2 / *num1;
 			free(num1);
@@ -234,7 +236,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			if (*num2 != 0)
 				*result = *num2 % *num1;
 			free(num1);
@@ -246,7 +248,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			*result = *num2 > *num1 ? 1 : 0;
 			free(num1);
 			free(num2);
@@ -256,7 +258,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		case '!':
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = (int*)malloc(sizeof(int));
+			int* result = malloc(sizeof(int));
 			*result = *num1 == 0 ? 1 : 0;
 			free(num1);
 			StackPush(lex->memory, result);
@@ -278,7 +280,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			break;
 		case ':':
 		{
-			int* num = (int*)StackPop(lex->memory, sizeof(int)), *copy = (int*)malloc(sizeof(int));
+			int* num = (int*)StackPop(lex->memory, sizeof(int)), *copy = malloc(sizeof(int));
 			*copy = *num;
 			StackPush(lex->memory, num);
 			StackPush(lex->memory, copy);
@@ -366,13 +368,13 @@ void ExecuteToken(struct CF98Lex* lex)
 		default:
 			if (lex->currentToken >= '0' && lex->currentToken <= '9')
 			{
-				int* newMemory = (int*)malloc(sizeof(int));
+				int* newMemory = malloc(sizeof(int));
 				*newMemory = lex->currentToken - '0';
 				StackPush(lex->memory, newMemory);
 			}
 			if (lex->currentToken >= 'a' && lex->currentToken <= 'f')
 			{
-				int* newMemory = (int*)malloc(sizeof(int));
+				int* newMemory = malloc(sizeof(int));
 				*newMemory = lex->currentToken - 87;
 				StackPush(lex->memory, newMemory);
 			}
@@ -399,8 +401,6 @@ void CF98Parse(struct CF98Lex* lex)
 
 void CF98Close(struct CF98Lex* lex)
 {
-	free(lex->newlines->head.data);
-
 	for (int i = 0; i < lex->instructions->capacity; i++)
 	{
 		if (lex->instructions->data[i].data != NULL)

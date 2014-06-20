@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
 	output("Compiling...\n");
 
-	struct CF98Lex* lex = (struct CF98Lex*)malloc(sizeof(struct CF98Lex));
+	struct CF98Lex* lex = malloc(sizeof(struct CF98Lex));
 	CF98Init(lex, fp);
 	CF98Parse(lex);
 	CF98Close(lex);

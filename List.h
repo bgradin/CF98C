@@ -14,7 +14,7 @@ void ListInit(struct List* list)
 
 void ListAdd(struct List* list, void* data)
 {
-	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+	struct Node* newNode = malloc(sizeof(struct Node));
 	memset(newNode, 0, sizeof(struct Node));
 	NodeInit(newNode, data);
 
@@ -39,14 +39,10 @@ struct Node* PtrTo(struct List* list, int position)
 
 	struct Node* tmpNode = list->head.next;
 
-	int i = 0;
-	while (i < position && tmpNode->next != NULL)
-		tmpNode = tmpNode->next, i++;
+	for (int i = 0; i < position && tmpNode != NULL; i++)
+		tmpNode = tmpNode->next;
 
-	if (i == position || (i == position - 1 && tmpNode->next == NULL))
-		return tmpNode;
-
-	return NULL;
+	return tmpNode;
 }
 
 void ListDelete(struct List* list, int position)
@@ -55,7 +51,10 @@ void ListDelete(struct List* list, int position)
 	struct Node* node = PtrTo(list, position);
 
 	if (node != NULL)
-		prev->next = node->next, free(node);
+	{
+		prev->next = node->next;
+		free(node);
+	}
 }
 
 void ListFree(struct List* list)

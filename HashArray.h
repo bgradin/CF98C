@@ -22,7 +22,7 @@ void HashArrayInit(struct HashArray* arr)
 	arr->size = 0;
 	arr->capacity = DEFAULT_MAP_SIZE;
 	int size = sizeof(struct HashNode) * arr->capacity;
-	arr->data = (struct HashNode*)malloc(size);
+	arr->data = malloc(size);
 	memset(arr->data, 0, size);
 }
 
@@ -37,9 +37,11 @@ void HashArrayStore(struct HashArray* arr, int key, void* data)
 {
 	int index = HashArrayIndex(arr, key);
 
-	arr->size++;
-	arr->data[index].data = data;
-	arr->data[index].index = index;
+	if (arr->data == NULL)
+		arr->size++;
+
+	arr->data[key].data = data;
+	arr->data[key].index = index;
 }
 
 int HashArrayIndex(struct HashArray* arr, int key)
@@ -47,12 +49,9 @@ int HashArrayIndex(struct HashArray* arr, int key)
 	if (arr->size == arr->capacity)
 		HashArrayResize(arr);
 
-	int index = HashArrayHash(arr, key), i = 0;
-	while (i++ < arr->capacity && arr->data[index].data != NULL && arr->data[index].index != key)
+	int index = HashArrayHash(arr, key);
+	for (int i = 0; i < arr->capacity && arr->data[index].data != NULL && arr->data[index].index != key; i++)
 		index = index == arr->capacity - 1 ? 0 : index + 1; // Solve collisions with linear probing
-
-	if (i == arr->capacity)
-		HashArrayResize(arr);
 
 	return index;
 }
@@ -62,16 +61,22 @@ void HashArrayResize(struct HashArray* arr)
 	struct HashNode* oldMemory = arr->data;
 	int oldCapacity = arr->capacity;
 
-	arr->capacity << 1;
-	int newCapacity = sizeof(struct HashNode)* arr->capacity;
-	arr->data = (struct HashNode*)malloc(newCapacity);
+	arr->capacity <<= 1;
+	int newCapacity = sizeof(struct HashNode) * arr->capacity;
+	arr->data = malloc(newCapacity);
 	memset(arr->data, 0, newCapacity);
+	arr->size = 0;
 
 	for (int i = 0; i < oldCapacity; i++)
 	{
 		if (oldMemory[i].data != NULL)
-			HashArrayStore(arr, oldMemory[i].index, oldMemory[i].data);
+		{
+			int index = HashArrayHash(arr, oldMemory[i].index);
+			HashArrayStore(arr, index, oldMemory[i].data);
+		}
 	}
+
+	free(oldMemory);
 }
 
 void HashArrayFree(struct HashArray* arr)
