@@ -50,10 +50,8 @@ char GetToken(struct CF98Lex* lex, int xPos, int yPos)
 	if (xPos < 0 || yPos < 0)
 		return ' ';
 
-	int yOff = 0;
-	if (yPos > 0)
-		yOff = *((int*)PtrTo(lex->newlines, yPos)->data) + 2;
-
+	struct Node* node = PtrTo(lex->newlines, yPos);
+	int yOff = *((int*)node->data) + (yPos > 0 ? 2 : 0);
 	struct Node* nextNode = PtrTo(lex->newlines, yPos + 1);
 
 	if (nextNode != NULL && yOff + xPos > *((int*)nextNode->data) - 1)
