@@ -197,8 +197,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof *result);
 			*result = *num2 + *num1;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -210,8 +210,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof *result);
 			*result = *num2 - *num1;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -223,8 +223,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof *result);
 			*result = *num2 * *num1;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -237,8 +237,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			if (*num2 != 0)
 				*result = *num2 / *num1;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -251,8 +251,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			if (*num2 != 0)
 				*result = *num2 % *num1;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -264,8 +264,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* result = malloc(sizeof *result);
 			*result = *num2 > *num1 ? 1 : 0;
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 			StackPush(lex->memory, result);
 		}
@@ -356,10 +356,10 @@ void ExecuteToken(struct CF98Lex* lex)
 			int* num3 = (int*)StackPop(lex->memory, sizeof(int));
 			CF98InstructionStore(lex, *num3, *num2, *num1);
 			free(num1);
-			num1 = NULL;
 			free(num2);
-			num2 = NULL;
 			free(num3);
+			num1 = NULL;
+			num2 = NULL;
 			num3 = NULL;
 		}
 			break;
@@ -371,8 +371,8 @@ void ExecuteToken(struct CF98Lex* lex)
 			*value = CF98InstructionGet(lex, *num2, *num1);
 			StackPush(lex->memory, value);
 			free(num1);
-			num1 = NULL;
 			free(num2);
+			num1 = NULL;
 			num2 = NULL;
 		}
 			break;
@@ -439,9 +439,9 @@ void CF98Close(struct CF98Lex* lex)
 	HashArrayFree(lex->instructions);
 
 	free(lex->newlines);
-	lex->newlines = NULL;
 	free(lex->memory);
-	lex->memory = NULL;
 	free(lex->instructions);
+	lex->newlines = NULL;
+	lex->memory = NULL;
 	lex->instructions = NULL;
 }
