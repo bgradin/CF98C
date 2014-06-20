@@ -14,8 +14,8 @@ Current instruction set
 - +	Addition: Pop a and b, then push a+b
 - -	Subtraction: Pop a and b, then push b-a
 - *	Multiplication: Pop a and b, then push a*b
-- /	Integer division: Pop a and b, then push b/a, rounded down. If a is zero, ask the user what result they want.[dubious – discuss]
-- %	Modulo: Pop a and b, then push the remainder of the integer division of b/a. If a is zero, ask the user what result they want.[dubious – discuss]
+- /	Integer division: Pop a and b, then push b/a, rounded down. If a is zero, ask the user what result they want.
+- %	Modulo: Pop a and b, then push the remainder of the integer division of b/a. If a is zero, ask the user what result they want.
 - !	Logical NOT: Pop a value. If the value is zero, push 1; otherwise, push zero.
 - `	Greater than: Pop a and b, then push 1 if b>a, otherwise zero.
 - >	Start moving right
