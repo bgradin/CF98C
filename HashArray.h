@@ -37,11 +37,11 @@ void HashArrayStore(struct HashArray* arr, int key, void* data)
 {
 	int index = HashArrayIndex(arr, key);
 
-	if (arr->data == NULL)
+	if (arr->data[index].data == NULL)
 		arr->size++;
 
-	arr->data[key].data = data;
-	arr->data[key].index = index;
+	arr->data[index].data = data;
+	arr->data[index].index = key;
 }
 
 int HashArrayIndex(struct HashArray* arr, int key)
