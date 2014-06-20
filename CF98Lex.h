@@ -37,9 +37,9 @@ void CF98Init(struct CF98Lex* instance, FILE *fp)
 	instance->currentToken = 0;
 	instance->x = instance->y = 0;
 	instance->currentDirection = DIRECTION_NONE;
-	instance->instructions = malloc(sizeof(struct HashArray));
-	instance->memory = malloc(sizeof(struct Stack));
-	instance->newlines = malloc(sizeof(struct List));
+	instance->instructions = malloc(sizeof *instance->instructions);
+	instance->memory = malloc(sizeof *instance->memory);
+	instance->newlines = malloc(sizeof *instance->newlines);
 	HashArrayInit(instance->instructions);
 	StackInit(instance->memory);
 	ListInit(instance->newlines);
@@ -71,7 +71,7 @@ void FindNewLines(struct CF98Lex* lex)
 	clearerr(lex->fp);
 	fseek(lex->fp, 0, SEEK_SET);
 
-	int* zero = malloc(sizeof(int));
+	int* zero = malloc(sizeof *zero);
 	*zero = 0;
 	ListAdd(lex->newlines, zero);
 
@@ -79,7 +79,7 @@ void FindNewLines(struct CF98Lex* lex)
 	{
 		if (fgetc(lex->fp) == '\n')
 		{
-			int *newInt = malloc(sizeof(int));
+			int *newInt = malloc(sizeof *newInt);
 			*newInt = ftell(lex->fp) - 2;
 			ListAdd(lex->newlines, newInt);
 		}
@@ -99,7 +99,7 @@ struct ExistenceReturn CF98InstructionVerifyExistence(struct CF98Lex* lex, int x
 	struct HashArray* instructions = lex->instructions->data[instX].data;
 	if (instructions == NULL)
 	{
-		instructions = malloc(sizeof(struct HashArray));
+		instructions = malloc(sizeof *instructions);
 		HashArrayInit(instructions);
 		HashArrayStore(lex->instructions, xPos, instructions);
 	}
@@ -110,7 +110,7 @@ struct ExistenceReturn CF98InstructionVerifyExistence(struct CF98Lex* lex, int x
 	struct ExistenceReturn returnValue;
 	if (instruction == NULL)
 	{
-		returnValue.location = instruction = malloc(sizeof(int));
+		returnValue.location = instruction = malloc(sizeof *instruction);
 		*instruction = ' ';
 		HashArrayStore(instructions, yPos, instruction);
 		returnValue.existed = 1;
@@ -164,7 +164,7 @@ void ExecuteToken(struct CF98Lex* lex)
 {
 	if (lex->currentToken != '"' && lex->flags & CF_AGGREGATING_STRING == CF_AGGREGATING_STRING)
 	{
-		int* newMemory = malloc(sizeof(int));
+		int* newMemory = malloc(sizeof *newMemory);
 		*newMemory = lex->currentToken;
 		StackPush(lex->memory, newMemory);
 	}
@@ -194,7 +194,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			*result = *num2 + *num1;
 			free(num1);
 			num1 = NULL;
@@ -207,7 +207,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			*result = *num2 - *num1;
 			free(num1);
 			num1 = NULL;
@@ -220,7 +220,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			*result = *num2 * *num1;
 			free(num1);
 			num1 = NULL;
@@ -233,7 +233,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			if (*num2 != 0)
 				*result = *num2 / *num1;
 			free(num1);
@@ -247,7 +247,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			if (*num2 != 0)
 				*result = *num2 % *num1;
 			free(num1);
@@ -261,7 +261,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			*result = *num2 > *num1 ? 1 : 0;
 			free(num1);
 			num1 = NULL;
@@ -273,7 +273,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		case '!':
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
-			int* result = malloc(sizeof(int));
+			int* result = malloc(sizeof *result);
 			*result = *num1 == 0 ? 1 : 0;
 			free(num1);
 			num1 = NULL;
@@ -298,7 +298,7 @@ void ExecuteToken(struct CF98Lex* lex)
 			break;
 		case ':':
 		{
-			int* num = (int*)StackPop(lex->memory, sizeof(int)), *copy = malloc(sizeof(int));
+			int* num = (int*)StackPop(lex->memory, sizeof(int)), *copy = malloc(sizeof *copy);
 			*copy = *num;
 			StackPush(lex->memory, num);
 			StackPush(lex->memory, copy);
@@ -367,7 +367,7 @@ void ExecuteToken(struct CF98Lex* lex)
 		{
 			int* num1 = (int*)StackPop(lex->memory, sizeof(int));
 			int* num2 = (int*)StackPop(lex->memory, sizeof(int));
-			int* value = malloc(sizeof(int));
+			int* value = malloc(sizeof *value);
 			*value = CF98InstructionGet(lex, *num2, *num1);
 			StackPush(lex->memory, value);
 			free(num1);
@@ -378,14 +378,14 @@ void ExecuteToken(struct CF98Lex* lex)
 			break;
 		case '&':
 		{
-			int* input = malloc(sizeof(int));
+			int* input = malloc(sizeof *input);
 			scanf_s("%i", input);
 			StackPush(lex->memory, input);
 		}
 			break;
 		case '~':
 		{
-			int* input = malloc(sizeof(int));
+			int* input = malloc(sizeof *input);
 			char tmp = 0;
 			scanf_s("%c", &tmp);
 			*input = tmp;
@@ -395,13 +395,13 @@ void ExecuteToken(struct CF98Lex* lex)
 		default:
 			if (lex->currentToken >= '0' && lex->currentToken <= '9')
 			{
-				int* newMemory = malloc(sizeof(int));
+				int* newMemory = malloc(sizeof *newMemory);
 				*newMemory = lex->currentToken - '0';
 				StackPush(lex->memory, newMemory);
 			}
 			if (lex->currentToken >= 'a' && lex->currentToken <= 'f')
 			{
-				int* newMemory = malloc(sizeof(int));
+				int* newMemory = malloc(sizeof *newMemory);
 				*newMemory = lex->currentToken - 87;
 				StackPush(lex->memory, newMemory);
 			}

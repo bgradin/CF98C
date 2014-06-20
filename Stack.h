@@ -15,7 +15,7 @@ void StackInit(struct Stack* stack)
 
 void StackPush(struct Stack* stack, void* data)
 {
-	struct Node* newNode = malloc(sizeof(struct Node));
+	struct Node* newNode = malloc(sizeof *newNode);
 	NodeInit(newNode, data);
 
 	newNode->next = stack->head.next;
